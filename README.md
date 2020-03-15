@@ -1,4 +1,5 @@
 # sim
+Simulated different betting strategies on real set of up to 12000 consecutive roulette wheel results.
 
 ## Project setup
 ```
