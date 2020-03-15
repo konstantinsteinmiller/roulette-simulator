@@ -10,7 +10,8 @@ export default {
   // selectedItems: [1 , 2 , 3 , 4 , 5 , 6],
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue) {
-    const increasedBetAmount = betAmount + minBetAmount * 4
+    const increasedBetAmount = JSON.parse(JSON.stringify(betAmount * 5))
+    console.log('increasedBetAmount: ', increasedBetAmount)
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
@@ -23,8 +24,10 @@ export default {
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
     betQueue.unshift(JSON.parse(JSON.stringify(betAmount)))
-    betQueue.unshift(JSON.parse(JSON.stringify(increasedBetAmount)))
-    betQueue.unshift(JSON.parse(JSON.stringify(increasedBetAmount)))
-    betQueue.unshift(JSON.parse(JSON.stringify(increasedBetAmount)))
+    betQueue.unshift(increasedBetAmount)
+    betQueue.unshift(increasedBetAmount)
+    betQueue.unshift(increasedBetAmount)
+    betQueue.unshift(increasedBetAmount)
   },
+  onWin(/*betAmount, minBetAmount, betQueue, totalLoss, betWinMultiplier, betLooseMultiplier*/) {},
 }

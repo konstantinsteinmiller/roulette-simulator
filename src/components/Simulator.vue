@@ -17,6 +17,7 @@
         </div>
         <div class="mb-4">{{ strategy }}</div>
       </div>
+      <div>rounds: {{ rounds.length }}</div>
       <div>total wins: {{ statistics.totalWins }}</div>
       <div>total losses: {{ statistics.totalLosses }}</div>
       <div>
@@ -44,6 +45,8 @@
 
 <script>
 import ROUNDS from '../../data/1000/parts-0.json'
+import SafeReturn1_3_STRATEGY from '@/strategies/SafeReturn1_3'
+import SafeReturn2_3_STRATEGY from '@/strategies/SafeReturn2_3'
 import SafeReturn1_6_STRATEGY from '@/strategies/SafeReturn1_6'
 import SafeReturn5_6_STRATEGY from '@/strategies/SafeReturn5_6'
 import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
@@ -75,10 +78,13 @@ export default {
         cashPerGameList: [],
         betAmountPerGameList: [],
         totalBetAmountPerGameList: [],
+        totalLossList: [],
       },
       strategy: null,
       selectedStrategy: null,
       strategies: [
+        SafeReturn1_3_STRATEGY,
+        SafeReturn2_3_STRATEGY,
         SafeReturn1_6_STRATEGY,
         SafeReturn5_6_STRATEGY,
         SafeReturn11_12_STRATEGY,
@@ -98,6 +104,7 @@ export default {
         this.statistics.cashPerGameList,
         this.statistics.betAmountPerGameList,
         this.statistics.totalBetAmountPerGameList,
+        this.statistics.totalLossList,
       ]
     },
   },
@@ -109,11 +116,12 @@ export default {
   methods: {
     initSimulation() {
       this.isSimulating = true
-      this.selectedStrategy = this.strategy
 
       let defaultStrategy = SafeReturn35_36_STRATEGY
       defaultStrategy = this.getDefaultStrategy() || defaultStrategy
       this.loadStrategy(defaultStrategy)
+
+      this.selectedStrategy = this.strategy
 
       this.initializeData()
 
@@ -141,7 +149,9 @@ export default {
     },
     onLoose() {
       this.statistics.totalLosses++
-      const lostAmount = this.betAmount * this.betLooseMultiplier
+      const lostAmount = JSON.parse(
+        JSON.stringify(this.betAmount * this.betLooseMultiplier)
+      )
       this.cash -= lostAmount
       this.statistics.totalLoss += lostAmount
 
@@ -149,20 +159,25 @@ export default {
         this.betAmount,
         this.minBetAmount,
         this.betQueue,
-        this.totalLoss,
+        this.statistics.totalLoss,
         this.betWinMultiplier,
         this.betLooseMultiplier
       )
     },
     onWin() {
       this.statistics.totalWins++
-      this.cash += this.betAmount * this.betWinMultiplier
+      const winAmount = JSON.parse(
+        JSON.stringify(this.betAmount * this.betWinMultiplier)
+      )
+      this.cash += winAmount
+
+      this.statistics.totalLoss = 0
 
       this.strategy.onWin(
         this.betAmount,
         this.minBetAmount,
         this.betQueue,
-        this.totalLoss,
+        this.statistics.totalLoss,
         this.betWinMultiplier,
         this.betLooseMultiplier
       )
@@ -191,6 +206,7 @@ export default {
       this.statistics.totalBetAmountPerGameList.push(
         this.betAmount * this.betLooseMultiplier
       )
+      this.statistics.totalLossList.push(this.statistics.totalLoss)
     },
     loadRounds() {
       let rounds = localStorage.getItem('ROUNDS_ONE')
@@ -256,6 +272,7 @@ export default {
         cashPerGameList: [],
         betAmountPerGameList: [],
         totalBetAmountPerGameList: [],
+        totalLossList: [],
       }
     },
     initializeData() {

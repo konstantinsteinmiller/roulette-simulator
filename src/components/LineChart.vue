@@ -86,6 +86,10 @@ export default {
         name: 'total bet amount',
         data: this.seriesData[2],
       })
+      this.lineChartOptions.series.push({
+        name: 'total loss',
+        data: this.seriesData[3],
+      })
       // this.seriesData.forEach(data => {
       //   this.lineChartOptions.series.push({
       //     name: 'cash',
