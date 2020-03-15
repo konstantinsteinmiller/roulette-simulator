@@ -186,16 +186,27 @@ export default {
       }, {})
     },
     selected() {
-      return Object.keys(this.itemsMap).filter(item => this.itemsMap[item])
+      return Object.keys(this.itemsMap)
+        .filter(item => this.itemsMap[item])
+        .map(item => +item)
     },
   },
   mounted() {
     this.itemsMap = this.getItemsMap
+    this.initSelection()
+
+    this.$store.commit('simulator/setSelectedItems', this.selected)
   },
   methods: {
     onSelected(item) {
       this.itemsMap[item.value] = !this.itemsMap[item.value]
-      console.log('selected: ', this.selected)
+      this.$store.commit('simulator/setSelectedItems', this.selected)
+    },
+    initSelection() {
+      const numbers = [...Array(30).keys()].map(item => item + 1)
+      numbers.forEach(number => {
+        this.itemsMap[number] = true
+      })
     },
   },
 }
