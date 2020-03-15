@@ -21,4 +21,4 @@ npm run lint
 ```
 
 ## Impressions
-[Image of simulator](https://github.com/konstantinsteinmiller/roulette-simulator/tree/master/public/roulette-sim.png).
+![Image of simulator](https://github.com/konstantinsteinmiller/roulette-simulator/tree/master/public/roulette-sim.png).
