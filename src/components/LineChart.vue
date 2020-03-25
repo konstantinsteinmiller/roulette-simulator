@@ -40,22 +40,6 @@ export default {
           },
         },
         series: [],
-        // responsive: {
-        //   rules: [
-        //     {
-        //       condition: {
-        //         maxWidth: 500,
-        //       },
-        //       chartOptions: {
-        //         legend: {
-        //           layout: 'horizontal',
-        //           align: 'center',
-        //           verticalAlign: 'bottom',
-        //         },
-        //       },
-        //     },
-        //   ],
-        // },
       },
     }
   },
@@ -74,28 +58,11 @@ export default {
   },
   methods: {
     populateSeries() {
-      this.lineChartOptions.series.push({
-        name: 'cash',
-        data: this.seriesData[0],
-      })
-      this.lineChartOptions.series.push({
-        name: 'single bet amount',
-        data: this.seriesData[1],
-      })
-      this.lineChartOptions.series.push({
-        name: 'total bet amount',
-        data: this.seriesData[2],
-      })
-      this.lineChartOptions.series.push({
-        name: 'total loss',
-        data: this.seriesData[3],
-      })
-      // this.seriesData.forEach(data => {
-      //   this.lineChartOptions.series.push({
-      //     name: 'cash',
-      //     data,
-      //   })
+      // this.lineChartOptions.series.push({
+      //   name: 'cash',
+      //   data: this.seriesData[0],
       // })
+      this.seriesData.forEach(data => this.lineChartOptions.series.push(data))
     },
   },
 }

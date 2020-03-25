@@ -39,7 +39,10 @@
       </div>
     </div>
     <div v-if="isBroke" class="text-xxxl text-red">You went broke</div>
-    <LineChart v-if="!isSimulating" :series-data="getSeriesData" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart1" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart2" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart3" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart4" />
   </div>
 </template>
 
@@ -49,6 +52,7 @@ import SafeReturn1_3_STRATEGY from '@/strategies/SafeReturn1_3'
 import SafeReturn2_3_STRATEGY from '@/strategies/SafeReturn2_3'
 import SafeReturn1_6_STRATEGY from '@/strategies/SafeReturn1_6'
 import SafeReturn5_6_STRATEGY from '@/strategies/SafeReturn5_6'
+import SafeReturn1_12_STRATEGY from '@/strategies/SafeReturn1_12'
 import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
 import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
 import LineChart from '@/components/LineChart.vue'
@@ -59,7 +63,7 @@ export default {
   data() {
     return {
       isSimulating: true,
-      initialCash: 10000,
+      initialCash: 50000,
       minBetAmount: 5,
       betAmount: 0,
       betLooseMultiplier: 5,
@@ -72,12 +76,18 @@ export default {
         maxBetQueueLength: 0,
         totalWins: 0,
         totalLosses: 0,
+        winsInARow: 0,
+        lossesInARow: 0,
+        lostCashOnLossStreak: 0,
         maxBetAmount: 0,
         roundsOnMinBet: 0,
         totalLoss: 0,
         cashPerGameList: [],
         betAmountPerGameList: [],
         totalBetAmountPerGameList: [],
+        winsInARowPerGameList: [],
+        lossesInARowPerGameList: [],
+        lostCashOnLossStreakPerGameList: [],
         totalLossList: [],
       },
       strategy: null,
@@ -87,6 +97,7 @@ export default {
         SafeReturn2_3_STRATEGY,
         SafeReturn1_6_STRATEGY,
         SafeReturn5_6_STRATEGY,
+        SafeReturn1_12_STRATEGY,
         SafeReturn11_12_STRATEGY,
         SafeReturn35_36_STRATEGY,
       ],
@@ -99,12 +110,48 @@ export default {
     getWinLoose() {
       return this.cash - this.initialCash
     },
-    getSeriesData() {
+    getSeriesDataChart1() {
       return [
-        this.statistics.cashPerGameList,
-        this.statistics.betAmountPerGameList,
-        this.statistics.totalBetAmountPerGameList,
-        this.statistics.totalLossList,
+        {
+          name: 'cash',
+          data: this.statistics.cashPerGameList,
+        },
+        {
+          name: 'single bet amount',
+          data: this.statistics.betAmountPerGameList,
+        },
+        {
+          name: 'total bet amount',
+          data: this.statistics.totalBetAmountPerGameList,
+        },
+        {
+          name: 'total loss',
+          data: this.statistics.totalLossList,
+        },
+      ]
+    },
+    getSeriesDataChart2() {
+      return [
+        {
+          name: 'losses in a row',
+          data: this.statistics.lossesInARowPerGameList,
+        },
+      ]
+    },
+    getSeriesDataChart3() {
+      return [
+        {
+          name: 'wins in a row',
+          data: this.statistics.winsInARowPerGameList,
+        },
+      ]
+    },
+    getSeriesDataChart4() {
+      return [
+        {
+          name: 'lost cash on loss streak',
+          data: this.statistics.lostCashOnLossStreakPerGameList,
+        },
       ]
     },
   },
@@ -117,7 +164,7 @@ export default {
     initSimulation() {
       this.isSimulating = true
 
-      let defaultStrategy = SafeReturn35_36_STRATEGY
+      let defaultStrategy = SafeReturn1_12_STRATEGY
       defaultStrategy = this.getDefaultStrategy() || defaultStrategy
       this.loadStrategy(defaultStrategy)
 
@@ -128,12 +175,19 @@ export default {
       this.isBroke = false
     },
     simulate() {
-      this.rounds.some(round => {
+      this.rounds.some((round, roundNumber) => {
         this.updateBet()
 
         this.updateStatistics()
 
-        const isWin = this.selectedItems.includes(round)
+        const selectedItems = this.strategy?.runningSelectedItemsAmount
+          ? this.getNextSelection(
+              roundNumber,
+              this.strategy?.runningSelectedItemsAmount
+            )
+          : this.selectedItems
+
+        const isWin = selectedItems.includes(round)
         !isWin && this.onLoose()
         isWin && this.onWin()
         this.evaluateResult(isWin)
@@ -149,23 +203,34 @@ export default {
     },
     onLoose() {
       this.statistics.totalLosses++
+      this.statistics.lossesInARow++
+      this.statistics.winsInARow = 0
+
       const lostAmount = JSON.parse(
         JSON.stringify(this.betAmount * this.betLooseMultiplier)
       )
       this.cash -= lostAmount
       this.statistics.totalLoss += lostAmount
 
-      this.strategy.onLoose(
+      const result = this.strategy.onLoose(
         this.betAmount,
         this.minBetAmount,
         this.betQueue,
-        this.statistics.totalLoss,
+        {
+          ...this.statistics,
+        },
         this.betWinMultiplier,
         this.betLooseMultiplier
       )
+      // this.betAmount = result.betAmount
+      this.statistics.lostCashOnLossStreak =
+        result.statistics.lostCashOnLossStreak
     },
     onWin() {
       this.statistics.totalWins++
+      this.statistics.winsInARow++
+      this.statistics.lossesInARow = 0
+      this.statistics.lostCashOnLossStreak = 0
       const winAmount = JSON.parse(
         JSON.stringify(this.betAmount * this.betWinMultiplier)
       )
@@ -177,13 +242,23 @@ export default {
         this.betAmount,
         this.minBetAmount,
         this.betQueue,
-        this.statistics.totalLoss,
+        {
+          ...this.statistics,
+        },
         this.betWinMultiplier,
         this.betLooseMultiplier
       )
     },
     evaluateResult(/*isWin*/) {
-      // console.log('isWin: ', isWin)
+      this.statistics.winsInARowPerGameList.push(
+        JSON.parse(JSON.stringify(this.statistics.winsInARow))
+      )
+      this.statistics.lossesInARowPerGameList.push(
+        JSON.parse(JSON.stringify(this.statistics.lossesInARow))
+      )
+      this.statistics.lostCashOnLossStreakPerGameList.push(
+        JSON.parse(JSON.stringify(this.statistics.lostCashOnLossStreak))
+      )
       this.isBroke = this.betAmount * this.betLooseMultiplier > this.cash
     },
     updateStatistics() {
@@ -287,6 +362,19 @@ export default {
           strat => strat.name === DEFAULT_STRATEGY_NAME
         )
       }
+    },
+    getNextSelection(roundNumber, runningSelectedItemsAmount) {
+      const allNumbers = [...Array(37).keys()].map(item => item)
+      const slices = Math.floor(37 / runningSelectedItemsAmount)
+
+      const startIndex = (roundNumber % slices) * runningSelectedItemsAmount
+      if (startIndex > 36 - runningSelectedItemsAmount) {
+        return allNumbers.slice(0, runningSelectedItemsAmount)
+      }
+      return allNumbers.slice(
+        startIndex,
+        startIndex + runningSelectedItemsAmount
+      )
     },
   },
 }
