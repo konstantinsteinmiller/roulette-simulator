@@ -43,6 +43,8 @@
     <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart2" />
     <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart3" />
     <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart4" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart5" />
+    <LineChart v-if="!isSimulating" :series-data="getSeriesDataChart6" />
   </div>
 </template>
 
@@ -88,6 +90,8 @@ export default {
         winsInARowPerGameList: [],
         lossesInARowPerGameList: [],
         lostCashOnLossStreakPerGameList: [],
+        winStreakMap: {},
+        lossStreakMap: {},
         totalLossList: [],
       },
       strategy: null,
@@ -154,6 +158,32 @@ export default {
         },
       ]
     },
+    getSeriesDataChart5() {
+      const lossData = Object.keys(this.statistics.lossStreakMap)
+        .sort((a, b) => a - b)
+        .map(key => {
+          return this.statistics.lossStreakMap[key]
+        })
+      return [
+        {
+          name: 'lost streak map',
+          data: lossData,
+        },
+      ]
+    },
+    getSeriesDataChart6() {
+      const winData = Object.keys(this.statistics.winStreakMap)
+        .sort((a, b) => a - b)
+        .map(key => {
+          return this.statistics.winStreakMap[key]
+        })
+      return [
+        {
+          name: 'win streak map',
+          data: winData,
+        },
+      ]
+    },
   },
   mounted() {
     this.loadRounds()
@@ -204,6 +234,10 @@ export default {
     onLoose() {
       this.statistics.totalLosses++
       this.statistics.lossesInARow++
+      this.statistics.winStreakMap[this.statistics.winsInARow] = this.statistics
+        .winStreakMap[this.statistics.winsInARow]
+        ? this.statistics.winStreakMap[this.statistics.winsInARow] + 1
+        : 1
       this.statistics.winsInARow = 0
 
       const lostAmount = JSON.parse(
@@ -229,8 +263,14 @@ export default {
     onWin() {
       this.statistics.totalWins++
       this.statistics.winsInARow++
+      this.statistics.lossStreakMap[this.statistics.lossesInARow] = this
+        .statistics.lossStreakMap[this.statistics.lossesInARow]
+        ? this.statistics.lossStreakMap[this.statistics.lossesInARow] + 1
+        : 1
+
       this.statistics.lossesInARow = 0
       this.statistics.lostCashOnLossStreak = 0
+
       const winAmount = JSON.parse(
         JSON.stringify(this.betAmount * this.betWinMultiplier)
       )
