@@ -59,6 +59,7 @@ import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
 import SafeReturn2_36_STRATEGY from '@/strategies/SafeReturn2_36'
 import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
 import Rotating1_6_STRATEGY from '@/strategies/Rotating1_6'
+import AdaptiveStrategy from '@/strategies/AdaptiveStrategy'
 import LineChart from '@/components/LineChart.vue'
 
 export default {
@@ -108,6 +109,7 @@ export default {
         SafeReturn2_36_STRATEGY,
         SafeReturn35_36_STRATEGY,
         Rotating1_6_STRATEGY,
+        AdaptiveStrategy,
       ],
     }
   },
@@ -257,8 +259,7 @@ export default {
         {
           ...this.statistics,
         },
-        this.betWinMultiplier,
-        this.betLooseMultiplier
+        this
       )
       // this.betAmount = result.betAmount
       this.statistics.lostCashOnLossStreak =
@@ -289,8 +290,7 @@ export default {
         {
           ...this.statistics,
         },
-        this.betWinMultiplier,
-        this.betLooseMultiplier
+        this
       )
     },
     evaluateResult(/*isWin*/) {
