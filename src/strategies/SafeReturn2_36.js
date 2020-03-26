@@ -1,15 +1,12 @@
 export default {
-  name: 'safe return 1/12',
+  name: 'safe return 2/36',
   minBetAmount: 1,
   betLooseMultiplier: 1,
-  betWinMultiplier: 8,
+  betWinMultiplier: 17,
   /* eslint-disable */
   // selectedItems: [0, 1, 2, 3],
-  // selectedItems: [33, 34, 35, 36],
-  // selectedItems: [31, 33, 34, 30],
-  // selectedItems: [27, 28, 29, 0],
-  runningSelectedItemsAmount: 4,
-  runningSelectedItemsOffset: 1,
+  runningSelectedItemsAmount: 2,
+  runningSelectedItemsOffset: 10,
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue, statistics) {
     statistics.lostCashOnLossStreak += betAmount

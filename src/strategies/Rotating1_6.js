@@ -6,6 +6,7 @@ export default {
   /* eslint-disable */
   // selectedItems: [2],
   runningSelectedItemsAmount: 6,
+  runningSelectedItemsOffset: 0,
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue, statistics) {
     statistics.lostCashOnLossStreak += betAmount

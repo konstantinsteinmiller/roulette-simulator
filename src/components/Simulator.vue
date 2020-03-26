@@ -56,6 +56,7 @@ import SafeReturn1_6_STRATEGY from '@/strategies/SafeReturn1_6'
 import SafeReturn5_6_STRATEGY from '@/strategies/SafeReturn5_6'
 import SafeReturn1_12_STRATEGY from '@/strategies/SafeReturn1_12'
 import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
+import SafeReturn2_36_STRATEGY from '@/strategies/SafeReturn2_36'
 import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
 import Rotating1_6_STRATEGY from '@/strategies/Rotating1_6'
 import LineChart from '@/components/LineChart.vue'
@@ -66,7 +67,7 @@ export default {
   data() {
     return {
       isSimulating: true,
-      initialCash: 100000,
+      initialCash: 50000,
       minBetAmount: 5,
       betAmount: 0,
       betLooseMultiplier: 5,
@@ -104,6 +105,7 @@ export default {
         SafeReturn5_6_STRATEGY,
         SafeReturn1_12_STRATEGY,
         SafeReturn11_12_STRATEGY,
+        SafeReturn2_36_STRATEGY,
         SafeReturn35_36_STRATEGY,
         Rotating1_6_STRATEGY,
       ],
@@ -196,7 +198,7 @@ export default {
     initSimulation() {
       this.isSimulating = true
 
-      let defaultStrategy = SafeReturn1_12_STRATEGY
+      let defaultStrategy = SafeReturn2_36_STRATEGY
       defaultStrategy = this.getDefaultStrategy() || defaultStrategy
       this.loadStrategy(defaultStrategy)
 
@@ -214,7 +216,7 @@ export default {
 
         const selectedItems = this.strategy?.runningSelectedItemsAmount
           ? this.getNextSelection(
-              roundNumber,
+              roundNumber + (this.strategy?.runningSelectedItemsOffset || 0),
               this.strategy?.runningSelectedItemsAmount
             )
           : this.selectedItems
@@ -302,6 +304,13 @@ export default {
         JSON.parse(JSON.stringify(this.statistics.lostCashOnLossStreak))
       )
       this.isBroke = this.betAmount * this.betLooseMultiplier > this.cash
+
+      if (this.isBroke) {
+        this.statistics.lossStreakMap[this.statistics.lossesInARow] = this
+          .statistics.lossStreakMap[this.statistics.lossesInARow]
+          ? this.statistics.lossStreakMap[this.statistics.lossesInARow] + 1
+          : 1
+      }
     },
     updateStatistics() {
       this.statistics.maxBetAmount =
