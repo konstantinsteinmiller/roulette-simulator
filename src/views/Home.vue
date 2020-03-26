@@ -1,6 +1,6 @@
 <template>
   <div class="home p-8">
-    <h1 class="mb-4 text-xxlee">Roulette Simulator</h1>
+    <h1 class="mb-4 text-xxlee">Roulette Betting Strategy Simulator</h1>
     <Field msg="Welcome to Your Vue.js App" />
     <Simulator />
   </div>

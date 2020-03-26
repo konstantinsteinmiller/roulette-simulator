@@ -57,6 +57,7 @@ import SafeReturn5_6_STRATEGY from '@/strategies/SafeReturn5_6'
 import SafeReturn1_12_STRATEGY from '@/strategies/SafeReturn1_12'
 import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
 import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
+import Rotating1_6_STRATEGY from '@/strategies/Rotating1_6'
 import LineChart from '@/components/LineChart.vue'
 
 export default {
@@ -65,7 +66,7 @@ export default {
   data() {
     return {
       isSimulating: true,
-      initialCash: 50000,
+      initialCash: 100000,
       minBetAmount: 5,
       betAmount: 0,
       betLooseMultiplier: 5,
@@ -104,6 +105,7 @@ export default {
         SafeReturn1_12_STRATEGY,
         SafeReturn11_12_STRATEGY,
         SafeReturn35_36_STRATEGY,
+        Rotating1_6_STRATEGY,
       ],
     }
   },

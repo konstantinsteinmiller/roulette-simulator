@@ -1,14 +1,11 @@
 export default {
-  name: 'safe return 1/12',
+  name: 'rotating 1/6',
   minBetAmount: 1,
   betLooseMultiplier: 1,
-  betWinMultiplier: 8,
+  betWinMultiplier: 5,
   /* eslint-disable */
-  // selectedItems: [0, 1, 2, 3],
-  // selectedItems: [33, 34, 35, 36],
-  // selectedItems: [31, 33, 34, 30],
-  // selectedItems: [27, 28, 29, 0],
-  runningSelectedItemsAmount: 4,
+  // selectedItems: [2],
+  runningSelectedItemsAmount: 6,
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue, statistics) {
     statistics.lostCashOnLossStreak += betAmount
@@ -19,10 +16,7 @@ export default {
       this.betWinMultiplier * betAmount < statistics.lostCashOnLossStreak
         ? newBetAmount
         : betAmount
-    statistics.lossesInARow =
-      statistics.lossesInARow % this.betWinMultiplier === 6
-        ? 0
-        : statistics.lossesInARow
+
     betQueue.unshift(JSON.parse(JSON.stringify(increasedBetAmount)))
     return { betAmount, minBetAmount, betQueue, statistics }
   },
