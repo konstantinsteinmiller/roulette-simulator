@@ -61,6 +61,8 @@ import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
 import Rotating1_6_STRATEGY from '@/strategies/Rotating1_6'
 import Adaptive_STRATEGY from '@/strategies/AdaptiveStrategy'
 import Fibonacci_STRATEGY from '@/strategies/FibonacciStrategy'
+import ReducedReturn1_12_STRATEGY from '@/strategies/ReducedReturn1_12'
+import ReducedReturn1_36_STRATEGY from '@/strategies/ReducedReturn1_36'
 import LineChart from '@/components/LineChart.vue'
 
 export default {
@@ -113,6 +115,8 @@ export default {
         Rotating1_6_STRATEGY,
         Adaptive_STRATEGY,
         Fibonacci_STRATEGY,
+        ReducedReturn1_12_STRATEGY,
+        ReducedReturn1_36_STRATEGY,
       ],
     }
   },
