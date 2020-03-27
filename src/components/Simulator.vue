@@ -59,7 +59,8 @@ import SafeReturn11_12_STRATEGY from '@/strategies/SafeReturn11_12'
 import SafeReturn2_36_STRATEGY from '@/strategies/SafeReturn2_36'
 import SafeReturn35_36_STRATEGY from '@/strategies/SafeReturn35_36'
 import Rotating1_6_STRATEGY from '@/strategies/Rotating1_6'
-import AdaptiveStrategy from '@/strategies/AdaptiveStrategy'
+import Adaptive_STRATEGY from '@/strategies/AdaptiveStrategy'
+import Fibonacci_STRATEGY from '@/strategies/FibonacciStrategy'
 import LineChart from '@/components/LineChart.vue'
 
 export default {
@@ -68,12 +69,13 @@ export default {
   data() {
     return {
       isSimulating: true,
-      initialCash: 50000,
+      initialCash: 10000,
       minBetAmount: 5,
       betAmount: 0,
       betLooseMultiplier: 5,
       betWinMultiplier: 1,
       betQueue: [],
+      fibonacciQueue: [],
       cash: 0,
       isBroke: false,
       rounds: [],
@@ -109,7 +111,8 @@ export default {
         SafeReturn2_36_STRATEGY,
         SafeReturn35_36_STRATEGY,
         Rotating1_6_STRATEGY,
-        AdaptiveStrategy,
+        Adaptive_STRATEGY,
+        Fibonacci_STRATEGY,
       ],
     }
   },
@@ -200,7 +203,7 @@ export default {
     initSimulation() {
       this.isSimulating = true
 
-      let defaultStrategy = SafeReturn2_36_STRATEGY
+      let defaultStrategy = Fibonacci_STRATEGY
       defaultStrategy = this.getDefaultStrategy() || defaultStrategy
       this.loadStrategy(defaultStrategy)
 
@@ -251,6 +254,8 @@ export default {
       )
       this.cash -= lostAmount
       this.statistics.totalLoss += lostAmount
+
+      this.statistics.lostCashOnLossStreak += lostAmount
 
       const result = this.strategy.onLoose(
         this.betAmount,
@@ -405,6 +410,7 @@ export default {
       this.betAmount = this.minBetAmount
       this.cash = this.initialCash
       this.betQueue = []
+      this.fibonacciQueue = []
     },
     getDefaultStrategy() {
       const DEFAULT_STRATEGY_NAME = localStorage.getItem('DEFAULT_STRATEGY')

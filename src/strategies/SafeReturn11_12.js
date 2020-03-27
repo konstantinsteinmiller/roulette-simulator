@@ -11,7 +11,6 @@ export default {
   ],
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue, statistics) {
-    statistics.lostCashOnLossStreak += betAmount * this.betLooseMultiplier
     const newBetAmount = Math.ceil((betAmount * this.betLooseMultiplier) / 2)
     const increasedBetAmount =
       this.betLooseMultiplier * betAmount <= statistics.lostCashOnLossStreak

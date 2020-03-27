@@ -9,7 +9,6 @@ export default {
   runningSelectedItemsOffset: 10,
   /* eslint-enable */
   onLoose(betAmount, minBetAmount, betQueue, statistics) {
-    statistics.lostCashOnLossStreak += betAmount
     const newBetAmount = Math.ceil(
       statistics.lostCashOnLossStreak / this.betWinMultiplier
     )
