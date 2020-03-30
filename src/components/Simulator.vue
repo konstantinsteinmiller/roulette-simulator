@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       isSimulating: true,
-      initialCash: 10000,
+      initialCash: 20000,
       minBetAmount: 5,
       betAmount: 0,
       betLooseMultiplier: 5,
@@ -218,6 +218,10 @@ export default {
       this.isBroke = false
     },
     simulate() {
+      if (this.strategy?.simulationHook) {
+        this.strategy.simulationHook(this)
+        return null
+      }
       this.rounds.some((round, roundNumber) => {
         this.updateBet()
 

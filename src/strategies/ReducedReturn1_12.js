@@ -31,7 +31,5 @@ export default {
   onWin(/*betAmount, minBetAmount, betQueue*/) {
     // console.log('onWin: ')
   },
-  simulationHook(that) {
 
-  },
 }
